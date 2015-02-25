@@ -89,14 +89,13 @@ public class Crypto {
         /*
             Init
          */
-        System.out.println(data.length + " l");
+
         bufferedBlockCipher.init(mode,cipherParameters);
 
         int maxOutputSize = bufferedBlockCipher.getOutputSize(data.length);
 
         byte[] processedData = new byte[maxOutputSize];
 
-        System.out.println(maxOutputSize);
 
         /*
             Processing
@@ -109,7 +108,7 @@ public class Crypto {
         /*
            Check if the final array has more elements than it should
          */
-        System.out.println(bytesProcessed);
+
         if(bytesProcessed == processedData.length)
             return processedData;
 

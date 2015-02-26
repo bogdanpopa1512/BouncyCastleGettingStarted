@@ -6,6 +6,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.paddings.BlockCipherPadding;
+import org.bouncycastle.crypto.paddings.ISO10126d2Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.ZeroBytePadding;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -33,15 +34,49 @@ public class Crypto {
 
         /*
          * Initialisation of the block cypher
+         * Available Ciphers:
+         * - AESEngine
+         * - AESFastEngine
+         * - AESLightEngine
+         * - BlowfishEngine
+         * - CamelliaEngine
+         * - CAST5Engine
+         * - CAST6Engine
+         * - CBCBlockCipher
+         * - CFBBlockCipher
+         * - DESedeEngine
+         * - DESEngine
+         * - GOFBBlockCipher
+         * - GOST28147Engine
+         * - IDEAEngine
+         * - NoekeonEngine
+         * - NullEngine
+         * - OFBBlockCipher
+         * - OpenPGPCFBBlockCipher
+         * - PGPCFBBlockCipher
+         * - RC2Engine
+         * - RC532Engine
+         * - RC564Engine
+         * - RC6Engine
+         * - RijndaelEngine
+         * - SEEDEngine
+         * - SerpentEngine
+         * - SICBlockCipher
+         * - SkipjackEngine
+         * - TEAEngine
+         * - TwofishEngine
+         * - XTEAEngine
          */
 
         BlockCipher blockCipher = new AESEngine();
 
         /*
          * Padding
+         * In some cases padding is necessary because some algorithms requires
+         * the input to be an exact multiple of the block size.
          */
 
-        BlockCipherPadding blockCipherPadding = new ZeroBytePadding();
+        BlockCipherPadding blockCipherPadding = new ISO10126d2Padding();
 
         BufferedBlockCipher bufferedBlockCipher = new PaddedBufferedBlockCipher(blockCipher,blockCipherPadding);
 
@@ -70,9 +105,11 @@ public class Crypto {
 
         /*
          * Padding
+         * In some cases padding is necessary because some algorithms requires
+         * the input to be an exact multiple of the block size.
          */
 
-        BlockCipherPadding blockCipherPadding = new ZeroBytePadding();
+        BlockCipherPadding blockCipherPadding = new ISO10126d2Padding();
 
         BufferedBlockCipher bufferedBlockCipher = new PaddedBufferedBlockCipher(blockCipher,blockCipherPadding);
 

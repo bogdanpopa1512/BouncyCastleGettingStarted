@@ -1,5 +1,6 @@
 package crypto;
 
+import crypto.exceptions.NoMoreSpaceException;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -22,7 +23,61 @@ public class Crypto {
 
     private static final boolean ENCRYPT_MODE = true;
 
-    public static byte[] encryptAES256(byte[] dataToEncrypt , byte[] key) throws InvalidCipherTextException {
+    private static Crypto sharedInstance = null;
+
+    private byte keyBytes[];
+
+    private int keyBytesLength = 0;
+
+    private Crypto(){
+
+        this.keyBytes = new byte[32];
+
+    }
+
+    public static Crypto getSharedInstance(){
+
+        synchronized (sharedInstance){
+            if(sharedInstance == null){
+                sharedInstance = new Crypto();
+                return sharedInstance;
+            }
+        }
+
+        return sharedInstance;
+    }
+
+    public void resetKey(){
+
+        keyBytesLength = 0;
+
+    }
+
+    public void contributeToKey(byte keyMaterial[] , int len) throws NoMoreSpaceException{
+
+        if(len + keyBytesLength > 32){
+            throw new NoMoreSpaceException(len,keyBytesLength);
+        }
+
+        for(int i=keyBytesLength ; i < keyBytesLength + len ; i++){
+
+            keyBytes[i] = keyMaterial[i-keyBytesLength];
+
+        }
+
+        keyBytesLength += len;
+
+    }
+
+    public void contributeToKey(byte keyMaterial[]) throws NoMoreSpaceException {
+
+        contributeToKey(keyMaterial,keyMaterial.length);
+
+    }
+
+
+
+    public byte[] encryptAES256(byte[] dataToEncrypt , byte[] key) throws InvalidCipherTextException {
 
         /*
             Key as cipher parameter
@@ -87,7 +142,7 @@ public class Crypto {
         return process(dataToEncrypt, bufferedBlockCipher, cipherParameters, ENCRYPT_MODE);
     }
 
-    public static byte[] decryptAES256(byte[] dataToDecrypt , byte[] key) throws InvalidCipherTextException {
+    public byte[] decryptAES256(byte[] dataToDecrypt , byte[] key) throws InvalidCipherTextException {
 
         /*
             Key as cipher parameter
@@ -121,7 +176,7 @@ public class Crypto {
 
     }
 
-    private static byte[] process(byte[] data ,BufferedBlockCipher bufferedBlockCipher , CipherParameters cipherParameters , boolean mode) throws InvalidCipherTextException {
+    private byte[] process(byte[] data ,BufferedBlockCipher bufferedBlockCipher , CipherParameters cipherParameters , boolean mode) throws InvalidCipherTextException {
 
         /*
             Init
